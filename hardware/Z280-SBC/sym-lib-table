@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name "Z280")(type "KiCad")(uri "/media/work/z280/hardware/kicad-libraries/symbols/Z280.kicad_sym")(options "")(descr ""))
+)
