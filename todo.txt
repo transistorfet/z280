@@ -1,4 +1,14 @@
 
+* You might not need the RAMSEL and ROMSEL overrides? (well I guess it's insurance more than anything)
+
+* STx signals have the IO space as well as interrupt acknowledges
+* WAIT is synchronous!  It must be asserted in coordination with the clock
+* CPLD could act as both an interrupt controller and bus coordinator (or rather, the local bus coordinator, where the global coordinator would be on the backplane)
+
+* perhaps I can use a smaller ATF chip after all, since the 84 pin one is facking huge =/  But there aren't any 44 pin ones easily available right now (also concerning)
+
+
+
 * ATA-READY needs to be tied to something, maybe interposed with DS to insert WAIT states until ATA-READY is high
 
 * you could maybe replace the 74HC05 with a SO-23 MOSFET?
