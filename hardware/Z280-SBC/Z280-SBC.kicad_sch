@@ -4787,6 +4787,12 @@
     (path "/602e30d7-ffc5-4db9-b4eb-1e45babfc684/6f103fd1-992a-40b7-83d7-8983adf57ef4"
       (reference "J8") (unit 1) (value "IE/OE") (footprint "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical")
     )
+    (path "/4f5962dd-3951-476e-a642-9dc05aa10c51/9463124f-3abb-4707-b252-fed0a8308f4e"
+      (reference "J9") (unit 1) (value "POWER") (footprint "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical")
+    )
+    (path "/4f5962dd-3951-476e-a642-9dc05aa10c51/81efe8fa-bc5b-443f-9e7b-f8f934a68115"
+      (reference "J10") (unit 1) (value "POWER") (footprint "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical")
+    )
     (path "/0a91471e-710b-4e6d-8b08-d4b71cfff47b"
       (reference "JP1") (unit 1) (value "~{AOE} ENABLE") (footprint "Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm")
     )
