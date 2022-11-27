@@ -2164,7 +2164,7 @@
       (effects (font (size 1.27 1.27)) (justify left) hide)
     )
   )
-  (global_label "ROMSEL" (shape bidirectional) (at 128.27 60.96 0) (fields_autoplaced)
+  (global_label "~{ROMSEL}" (shape bidirectional) (at 128.27 60.96 0) (fields_autoplaced)
     (effects (font (size 1.27 1.27)) (justify left))
     (uuid 8133dfdf-0c9f-4a15-80ca-8c2532ccc677)
     (property "Intersheet References" "${INTERSHEET_REFS}" (id 0) (at 138.1217 60.8806 0)
