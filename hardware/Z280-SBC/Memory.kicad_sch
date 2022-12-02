@@ -4,6 +4,11 @@
 
   (paper "A4")
 
+  (title_block
+    (title "Z280-SBC")
+    (rev "1")
+  )
+
   (lib_symbols
     (symbol "74xx:74HC14" (pin_names (offset 1.016)) (in_bom yes) (on_board yes)
       (property "Reference" "U" (id 0) (at 0 1.27 0)
@@ -3169,7 +3174,7 @@
     (property "Reference" "U7" (id 0) (at 184.8994 44.45 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Value" "M29F800" (id 1) (at 184.8994 46.99 0)
+    (property "Value" "M29F160" (id 1) (at 184.8994 46.99 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Footprint" "Package_SO:TSOP-I-48_18.4x12mm_P0.5mm" (id 2) (at 182.88 78.74 0)

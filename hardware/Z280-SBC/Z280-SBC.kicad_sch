@@ -4,6 +4,11 @@
 
   (paper "A4")
 
+  (title_block
+    (title "Z280-SBC")
+    (rev "1")
+  )
+
   (lib_symbols
     (symbol "74xx:74HC14" (pin_names (offset 1.016)) (in_bom yes) (on_board yes)
       (property "Reference" "U" (id 0) (at 0 1.27 0)
@@ -4819,6 +4824,9 @@
     (path "/4f5962dd-3951-476e-a642-9dc05aa10c51/9c238ece-eeba-47fa-bcff-940272f40229"
       (reference "C16") (unit 1) (value "0.1uF") (footprint "Capacitor_SMD:C_1206_3216Metric_Pad1.33x1.80mm_HandSolder")
     )
+    (path "/4f5962dd-3951-476e-a642-9dc05aa10c51/727a030f-a21a-408e-a280-dfe450ef17c6"
+      (reference "C17") (unit 1) (value "0.1uF") (footprint "Capacitor_SMD:C_1206_3216Metric_Pad1.33x1.80mm_HandSolder")
+    )
     (path "/4f5962dd-3951-476e-a642-9dc05aa10c51/32ff13e9-2fc8-4451-8008-990360d1c539"
       (reference "J1") (unit 1) (value "CompactFlash") (footprint "Computie_Connectors:CF-Card_3M_N7E50-Q516RB-40")
     )
@@ -4937,7 +4945,7 @@
       (reference "U6") (unit 5) (value "74HC08") (footprint "Package_SO:TSSOP-14_4.4x5mm_P0.65mm")
     )
     (path "/90e9c810-888d-48c4-9c9e-639527fe4c40/1cdfe995-09d1-49cd-b2e9-94d54f942738"
-      (reference "U7") (unit 1) (value "M29F800") (footprint "Package_SO:TSOP-I-48_18.4x12mm_P0.5mm")
+      (reference "U7") (unit 1) (value "M29F160") (footprint "Package_SO:TSOP-I-48_18.4x12mm_P0.5mm")
     )
     (path "/90e9c810-888d-48c4-9c9e-639527fe4c40/c4f74494-570d-402f-8056-6372acc55fdd"
       (reference "U8") (unit 1) (value "AS6C8016") (footprint "Package_SO:TSOP-II-44_10.16x18.41mm_P0.8mm")

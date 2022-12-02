@@ -4,6 +4,11 @@
 
   (paper "A4")
 
+  (title_block
+    (title "Z280-SBC")
+    (rev "1")
+  )
+
   (lib_symbols
     (symbol "Connector:AVR-JTAG-10" (pin_names (offset 1.016)) (in_bom yes) (on_board yes)
       (property "Reference" "J" (id 0) (at -8.89 13.97 0)
