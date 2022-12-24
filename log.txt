@@ -1,0 +1,8 @@
+
+2022-12-23:
+
+- The CPU sort of seems to be working, and fetching what it should sorta, but the arduino is a bit too slow I think to respond in
+  time, and the attempt at setting the timing config on reset doesn't seem to work
+- I've got the memory on, and the CPU out, and there's a problem accessing memory addresses.  It seems like the A4 line is stuck
+  to something.  It can't be pulled low or high, and instead wants to float around 1V
+ 

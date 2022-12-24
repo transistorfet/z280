@@ -8,23 +8,9 @@
 * perhaps I can use a smaller ATF chip after all, since the 84 pin one is facking huge =/  But there aren't any 44 pin ones easily available right now (also concerning)
 
 
-
-* ATA-READY needs to be tied to something, maybe interposed with DS to insert WAIT states until ATA-READY is high
-
-* you could maybe replace the 74HC05 with a SO-23 MOSFET?
 * actually, you can use the single 16-bit flash chip, the 29F800, because you can't write data to it without the special programming sequence,
   so using all 16-bits all the time is fine because it'll only be for reading...
 
 * should you put jumpers in the ROMSEL/RAMSEL signals, such that an I/O pin on the CPLD can be programmed as an input or an output,
   and the jumper bridged or not to allow either the logic or the CPLD to control access
-
-* add ATF1504, with JTAG connector and ISP support
-
-
-* for LDS/UDS, and the address selection, it needs to only be asserted if DS is asserted
-
-* should it be possible to run it (at least if you populate the spaces on the board), without a CPLD,
-  but to also have the CPLD, especially for the bus, so that you can experiment?
-* need a Quad OR gate, a Quad AND gate, a Hex Invertors, and a 3-to-8 Decoder for logic and decode
-* also need 2 573 Octal Latches, but those would be necessary anyways
 

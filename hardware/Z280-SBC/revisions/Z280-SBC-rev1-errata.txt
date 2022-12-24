@@ -1,0 +1,6 @@
+
+Revision 1 Errata and Notes
+===========================
+
+- Power connectors are upside-down (ground on top), and are unlabelled
+ 
