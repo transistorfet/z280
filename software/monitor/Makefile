@@ -8,11 +8,13 @@ rom: welcome.txt
 %.txt: %.bin
 	hexdump -v -e '/1 "0x%02x, "' $< > ../$@
 
-%.bin: %.asm
-	#z80asm --list=$<.lst $<
-	z80asm -o $@ $<
+#%.bin: %.asm
+#	#z80asm --list=$<.lst $<
+#	z80asm -o $@ $<
 
-
+%.bin: %.rel
+	sdldz80 -iu $* -e
+	objcopy --input-target=ihex --output-target=binary $*.ihx $@
 
 
 image: image.hex
@@ -27,7 +29,7 @@ image.hex: main.rel crt0.o
 %.rel: %.c
 	sdcc -mz80 --no-std-crt0 --code-loc 0x0100 --data-loc 0x800 --stack-loc 0x0C00 -c -o $@ $<
 
-%.o: %.asm
+%.rel: %.asm
 	sdasz80 -l -p -o -s $<
 
 clean:

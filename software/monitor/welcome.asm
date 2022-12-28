@@ -1,94 +1,101 @@
 
-	include "z280.inc"
+	.include "z280.inc"
 
-	org	0000h
+	.area	CODE	(ABS)
+	.org	0x0000
 	jp	start
 
-	org	0080h
-	seek	0080h
+	.org	0x0080
 
 start:
-	ld	sp, 02000h
+	ld	sp, #0x2000
 
 	; Set I/O Page Register to 0xFF
-	ld	l, 0FFh
-	ld	c, 08h
-	; LDCTL (C), HL
-	db	0EDh
-	db	06Eh
+	ld	l, #0xFF
+	LDCTL	#0x08
 
 	; Set MMU Page Descriptor Pointer
-	ld	a, 00h
-	out	(0F1h), a
+	ld	a, #0
+	out	(#0xF1), a
 
 	; Set sequential page registers
-	ld	b, 20h	; 32 pages
-	ld	hl, page_table
-	OTIRW	0F4h
+	ld	b, #0x20	; 32 pages
+	ld	hl, #page_table
+	OTIRW	#0xF4
 
+	ld	l, #0x02
+	LDCTL	#0x10
+
+.db 0xED
+.db 0x9F
+.db 0
+.db 0
+.db 0
+.db 0
 
 	; Set MMU Master Control Register
-	ld	h, 0BBh		; Enabled the MMU
-	ld	l, 0E0h
-	OUTW	0F0h
+	ld	h, #0xBB		; Enabled the MMU
+	ld	l, #0xE0
+	OUTW	#0xF0
 
+
+	ld	b, #0x30
+delay:
+	djnz	delay
+
+	halt
 
 
 	; Write a startup word to RAM if possible
-	ld	hl, 2000h
-	ld	a, 055h
+	ld	hl, #0x2000
+	ld	a, #0x55
 	ld	(hl), a
 	inc	hl
 	inc	hl
-	ld	a, 0AAh
+	ld	a, #0xAA
 	ld	(hl), a
 
 
 
 
 	; Set I/O Page Register to 0xFE
-	ld	l, 0FEh
-	ld	c, 08h
+	ld	l, #0xFE
+	ld	c, #0x08
 	; LDCTL (C), HL
-	db	0EDh
-	db	06Eh
+	.db	0xED
+	.db	0x6E
 
 	; Set UART Control Register
-	ld	a, 0C8h
-	out	(010h), a
+	ld	a, #0xC8
+	out	(0x10), a
 
 	; Set Transmit Control Register
-	ld	a, 080h
-	out	(012h), a
+	ld	a, #0x80
+	out	(0x12), a
 
 
 
 send:
 	; Send byte
-	ld	a, 0AAh
-	out	(018h), a
-	jp	send
-
-	ld	b, 50h
-delay:
-	djnz	delay
-
-	halt
+	ld	a, #0xAA
+	out	(0x18), a
+	;jp	send
 
 	;call	_main
 	halt
 
 _main:
-	ld	a, 01h
-	out	(00FFh), a
+	ld	a, #0x01
+	out	(0x00FF), a
 
-	ld	de, msg
+	ld	de, #msg
 
 loop:
 	ld	a, (de)
-	cp	0
+	ld	b, #0
+	cp	b
 	jp	Z, loop_end
-	out	(00F1h), a
+	out	(0x00F1), a
 	inc	de
 	jp	loop
 	
@@ -97,43 +104,43 @@ loop_end:
 	ret
 ; end _main
 
-msg:	defm	"Welcome To Bread80!\n\n\0"
+msg:	.ascii	"Welcome To Bread80!\n\n\0"
 
 page_table:
 	; User Descriptors
-	dw	00800h
-	dw	01800h
-	dw	00C10h
-	dw	01C10h
-	dw	02C10h
-	dw	03C10h
-	dw	04C10h
-	dw	05C10h
-	dw	06C10h
-	dw	07C10h
-	dw	08C10h
-	dw	09C10h
-	dw	0AC10h
-	dw	0BC10h
-	dw	0CC10h
+	.dw	0x0800
+	.dw	0x1800
+	.dw	0x0C10
+	.dw	0x1C10
+	.dw	0x2C10
+	.dw	0x3C10
+	.dw	0x4C10
+	.dw	0x5C10
+	.dw	0x6C10
+	.dw	0x7C10
+	.dw	0x8C10
+	.dw	0x9C10
+	.dw	0xAC10
+	.dw	0xBC10
+	.dw	0xCC10
 
 	; System Descriptors
-	dw	00800h
-	dw	01800h
-	dw	00C10h
-	dw	01C10h
-	dw	02C10h
-	dw	03C10h
-	dw	04C10h
-	dw	05C10h
-	dw	06C10h
-	dw	07C10h
-	dw	08C10h
-	dw	09C10h
-	dw	0AC10h
-	dw	0BC10h
-	dw	0CC10h
+	.dw	0x0800
+	.dw	0x1800
+	.dw	0x0C10
+	.dw	0x1C10
+	.dw	0x2C10
+	.dw	0x3C10
+	.dw	0x4C10
+	.dw	0x5C10
+	.dw	0x6C10
+	.dw	0x7C10
+	.dw	0x8C10
+	.dw	0x9C10
+	.dw	0xAC10
+	.dw	0xBC10
+	.dw	0xCC10
 
 ; force the size to 512 bytes
-	seek	0200h
+	.org	0x200
 	nop

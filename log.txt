@@ -48,3 +48,23 @@
   a two-byte jump instruction.  Now to try some more complicated programs, although I still don't have access to RAM because of
   the MMU and the 64KB limit
 
+2022-12-28:
+
+- Ok, so yesterday I tried putting a big delay in the code and moved it around, and found that it seemed to execute, and there was
+  likely the "fatal condition" (section 6.6 of the technical manual for the Z280) occurring at some point before the normal
+  end of the program.  I had a bunch of issues wrong with the MMU initialization code, which I mostly resolved
+- I noticed the instruction hex I expected to see wasn't there, for `LD C, 0xF4` to load the I/O address, and long story short it
+  seemed to be the assembler, z80asm, which wasn't generating the correct opcodes, so I switched to sdcc's asxxxxm (sdasz80), which
+  produces more accurate code it seems
+- with the new assembler, it seems to be executing as expected, and running into the fatal condition around the time the MMU is
+  enabled, but when I commented out the actual OUTW instruction to enable the MMU, it didn't halt right away, but also didn't keep
+  issuing bus requests the way it normally does when running the delay loop that was after the MMU init.  It instead had a bunch
+  of refresh cycles only, and then halted.... so I'm not entirely sure if it ran the delay or not
+
+- Ok, what if I can make some other status condition appear to distinguish where I'm at in the code from the logic analysis alone.
+  I can make an EPU instruction which has it's own status codes for EPU transfers, and to do that I need to enable the EPU bit in
+  the Trap control register.  It seems to work, in that I get a status of 0xD twice, but according to the docs I shouldn't get that
+  code twice, I should get a 0xD followed by a 0xC.  Maybe the status 0 bit is stuck on?  It pretty much always stays on except for
+  some glitches
+- turns out channel 0 of my logic analyzer is busted.  Good thing I had a spare.  They are just cheap 24MHz ones
+
