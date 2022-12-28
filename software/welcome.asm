@@ -6,8 +6,34 @@
 	seek	0080h
 
 start:
-	ld	sp, 0200h
-	call	_main
+	ld	a, 0AAh
+	ld	hl, 0FFFFh
+	ld	(hl), a
+	halt
+
+	; Set I/O Page Register to 0xFE
+	ld	l, 0FEh
+	ld	c, 08h
+	; LDCTL (C), HL
+	db	0EDh
+	db	06Eh
+
+	; Set UART Control Register
+	ld	a, 0C8h
+	out	(010h), a
+
+	; Set Transmit Control Register
+	ld	a, 080h
+	out	(012h), a
+
+send:
+	; Send byte
+	ld	a, 0xAAh
+	out	(018h), a
+	jp	send
+
+	;ld	sp, 0200h
+	;call	_main
 	halt
 
 _main:

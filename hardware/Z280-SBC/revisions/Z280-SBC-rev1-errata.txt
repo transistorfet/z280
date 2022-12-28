@@ -3,4 +3,13 @@ Revision 1 Errata and Notes
 ===========================
 
 - Power connectors are upside-down (ground on top), and are unlabelled
- 
+
+- Somehow I managed to rotate the footprint for the flash chip.  Pin 1 is the bottom right corner instead of the top left.
+  It should be possible to rotate the chip and get it working, but I've already mounted the chip the wrong way, and it's
+  heated up quite a bit as a result.  Removing and rotating the chip fixed the issue.  It might not be as reliable as it
+  should be, but the reversed chip does seem to be working most of the time
+
+- I messed up the logic for latching the addresses with 74LVC573s.  It's actually positive logic, so a high on the LE
+  line of the will load the data bus into the address bus.  /AS is wired to it because we want it to latch only when /AS
+  is low (address an AD bus is valid), which is backwards.  It needs to be inverted before going into LE. 
+

@@ -5,4 +5,46 @@
   time, and the attempt at setting the timing config on reset doesn't seem to work
 - I've got the memory on, and the CPU out, and there's a problem accessing memory addresses.  It seems like the A4 line is stuck
   to something.  It can't be pulled low or high, and instead wants to float around 1V
+
+2022-12-24:
+
+- I somehow rotated the footprint for the flash chip, and mounted it the wrong way around when I soldered it, which would explain
+  why it was heating up a huge amount, and also why A4 was stuck.  Wire A4 is connected to pin 22, which is labelled A3 on the
+  pinout for the M29F160F chip.  With it rotated, that pin is actually Vss, and power is probably reversed or something.  I'll
+  have to take the chip off and rotate it to fix it, but I'm not sure if I'll try to reuse the chip or not
  
+2022-12-26:
+
+- I rotated the flash chip and resoldering it, and it seems to work.  It hasn't been 100% stable but I think that might be the
+  solder connections not being entirely perfect, and not damage in the chip.  It seems to hold its memory.
+
+- I now have an issue with the arduino resetting when I press the reset button on the board...  It seems to be related to touching
+  the resistor beside it.  If I use a pencil to hit reset, it isn't a problem
+
+- It seems the latch enable input is not inverted, and I somehow didn't see that when designing, and if I had, I would have needed
+  an extra 74HC14 or a single extra inverting gate, to invert /AS to get the latch input... It's going to be a bit tricky to bodge
+  in a fix.
+- without this, it tries to access an address where the lower byte is the data it's supposedly reading in, and not the latched
+  address.  I found this by writing all 0x76 to flash, which is the HALT instruction.  When running, it would indeed halt
+  after reading in two bytes.  I'm assuming the second byte read in was caching or something?  It might have even read the wrong
+  first byte, before reading in the second as 0x76.  I then jumped /DS to /WAIT so that it would wait immediately when fetching
+  the first instruction, and leave the address on the bus, and data on the data bus.  But 0x76 is on both the bottom of the
+  address bus and the bottom of the data bus, and the latch enable line is high (/AS is not asserted), but that means "LOAD", so
+  it's acting as a transparent buffer for the data bus...
+
+2022-12-27:
+
+- I cut the trace from /AS to the LE pins of the latches, and soldered a wire to one of the latch pins, with the other end soldered
+  to the unpopulated alternate clock crystal and resistors.  I'm reusing one of the currently unused inverter gates that was for
+  that alternate clock.  It provides a much easier place to solder onto.  The other side of the gate is wired to /AS by directly
+  coming off the throughhole PLCC socket's /AS pin, and going to the other crystal throughhole pad.
+- It seems to work correctly now.  I used the hack of connecting /DS to /WAIT to pause on the first instruction, and the address
+  bus has 0 on in now, and the data bus has 0x76 (since I still have all 0x76 in memory).
+- I then tried loading a proper program into memory and run with the logic analyzer.  It seems correct so far.  The program is
+  supposed to jump to 0x80 from 0x00, and then execute the 0x76 halt instruction.  It performs two memory cycles to get the first
+  jump instruction (0x9 non-cacheable transactions instead of 0x8 for some reason).  It then performs a refresh followed by two
+  0x9 memory cycles, and then halts with 0x03 and everything after that is refresh cycles (0x1).  For whatever reason, when
+  previously executing the halt on boot, it was also fetching twice before halting.  The main difference here is that it executes
+  a two-byte jump instruction.  Now to try some more complicated programs, although I still don't have access to RAM because of
+  the MMU and the 64KB limit
+
