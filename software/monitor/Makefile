@@ -3,7 +3,7 @@
 all: rom
 
 
-rom: welcome.txt
+rom: monitor.txt
 
 %.txt: %.bin
 	hexdump -v -e '/1 "0x%02x, "' $< > ../$@

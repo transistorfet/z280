@@ -1,6 +1,3 @@
-;
-; A simple demostration program for booting the basic system
-;
 
 	.include "z280.inc"
 
@@ -31,16 +28,37 @@ start:
 	; Initialize the stack pointer to the top of address space, where ram is mapped
 	ld	sp, #0x0000
 
-	; Now that we can access ram, call the main function
-	call	_main
-	halt
+
+;	; Write a startup word to RAM if possible
+;	ld	hl, #0x2000
+;	ld	b, #0x00
+;write_ram_inner:
+;	ld	a, #0x55
+;	ld	(hl), a
+;	inc	hl
+;	djnz	write_ram_inner
+
+
+
+
+
+
+ld	l, #0x02
+LDCTL	#0x10
+.db 0xED
+.db 0x9F
+.db 0
+.db 0
+.db 0
+.db 0
+
 
 _main:
 	call	init_uart
 
 	ld	de, #msg
 	call	print_msg
-	ret
+	halt
 
 ; Initialize the UART and Timer1
 init_uart:
@@ -92,19 +110,6 @@ print_msg:
 
 	jp	_print_next
     _print_end:
-
-	ret
-
-; Write data into ram to make sure it's mapped correctly
-ram_test:
-	; Write a startup word to RAM if possible
-	ld	hl, #0x2000
-	ld	b, #0x00
-write_ram_inner:
-	ld	a, #0x55
-	ld	(hl), a
-	inc	hl
-	djnz	write_ram_inner
 
 	ret
 

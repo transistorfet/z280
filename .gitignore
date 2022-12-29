@@ -9,8 +9,11 @@ session.vim
 *.bin
 *.elf
 *.hex
+*.ihx
+*.s19
 *.noi
 *.lst
+*.rst
 *.rel
 *.sym
 *.load
