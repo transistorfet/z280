@@ -559,7 +559,7 @@ void run_read_test(int argc, char **argv)
 	int errors = 0;
 
 	uint32_t start_addr = (argc >= 2) ? strtol(argv[1], NULL, 16) : MEM_ADDR;
-	uint16_t size = (argc >= 3) ? strtol(argv[2], NULL, 16) : MEM_SIZE;
+	uint32_t size = (argc >= 3) ? strtol(argv[2], NULL, 16) : MEM_SIZE;
 
 	set_bus_mode_controller();
 	Serial.print("Running Read Test\n");
@@ -590,10 +590,34 @@ void run_read_test(int argc, char **argv)
 	Serial.print("\n");
 }
 
+void run_quiet_read_test(int argc, char **argv)
+{
+	int errors = 0;
+
+	uint32_t start_addr = (argc >= 2) ? strtol(argv[1], NULL, 16) : MEM_ADDR;
+	uint32_t size = (argc >= 3) ? strtol(argv[2], NULL, 16) : MEM_SIZE;
+
+	set_bus_mode_controller();
+	Serial.print("Running Read Test\n");
+
+	for (uint32_t i = 0; i < size / 2; i++) {
+		uint32_t addr = start_addr + (i << 1);
+		uint16_t data = read_data(addr);
+
+		if (data != i)
+			errors += 1;
+	}
+
+	Serial.print("\n");
+	Serial.print("Errors: ");
+	Serial.print(errors, DEC);
+	Serial.print("\n");
+}
+
 void run_write_test(int argc, char **argv)
 {
 	uint32_t start_addr = (argc >= 2) ? strtol(argv[1], NULL, 16) : MEM_ADDR;
-	uint16_t size = (argc >= 3) ? strtol(argv[2], NULL, 16) : MEM_SIZE;
+	uint32_t size = (argc >= 3) ? strtol(argv[2], NULL, 16) : MEM_SIZE;
 
 	set_bus_mode_controller();
 	Serial.print("Running Write Test\n");
@@ -786,6 +810,9 @@ void do_command(String line)
 
 	if (!strcmp(argv[0], "read")) {
 		run_read_test(argc, argv);
+	}
+	else if (!strcmp(argv[0], "qread")) {
+		run_quiet_read_test(argc, argv);
 	}
 	else if (!strcmp(argv[0], "write")) {
 		run_write_test(argc, argv);

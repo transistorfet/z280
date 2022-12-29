@@ -68,3 +68,23 @@
   some glitches
 - turns out channel 0 of my logic analyzer is busted.  Good thing I had a spare.  They are just cheap 24MHz ones
 
+- with some fixes to the MMU initialization code (the word needs to be backwards in HL, because the byte order is reversed when
+  writing it to the I/O port), it now passes the MMU enable and runs to the normal halt
+- Since it seemed to get to the UART code, and I know I need to initialize the timer to get it to work, I took a look at the docs and
+  got some values to set for the three Timer1 registers, and checked some signals with the scope.  There wasn't anything on the
+  timer1 pins, no surprising because it was set to use an internal gate and trigger, so I looked at the RX pin on the serial
+  port (which is the host rx, device tx), and saw a blip of data!
+- the waveform looked right, so I set the scope's decode, but what I thought should be 115200 was closer to 38400, but not quite.
+  I adjusted the timer counter value to 27 instead of 26, and that seemed to get it working pretty well at 38400.
+
+- I got it to print "Welcome to Bread80!"!!!! I used the existing loop, but it was writing too fast, and there is no FIFO on the
+  UART, so I added some code to wait and check for the buffer empty flag before writing the next character, and it worked!
+  Now I have serial
+
+- many issues with the MMU.  I tried going over things to find errors, and tried a `ld hl, #BBE0` instruction to initialize the MMU
+  control register instead of two instructions with h and l separate, and that seemed to change something, but it would instead run
+  and never print the message or halt, so I figured something was up with the page table.
+- I tried initializing the table manually, and that seemed to work.  It turns out I only had 15 entries in each table instead of 16,
+  so when it wrote the end of the user page table, it would be off by one starting the system page table, which messed everything up.
+  Adding the missing entry now puts ram exactly where I expect it, and data can be written to it
+
