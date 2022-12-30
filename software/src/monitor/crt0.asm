@@ -1,5 +1,5 @@
 
-	.include "z280.inc"
+	.include "../../include/z280.inc"
 
 	.area	CODE	(ABS)
 

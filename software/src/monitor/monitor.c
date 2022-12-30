@@ -29,7 +29,7 @@ void init_uart()
 void init_uart() __naked
 {
 	__asm
-	.include "z280.inc"
+	.include "../../include/z280.inc"
 
 	; Set I/O Page Register to 0xFE
 	ld	l, #0xFE

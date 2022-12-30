@@ -23,9 +23,13 @@ rom: monitor.txt
 #	hexdump -v -e '/1 "0x%02x, "' image.bin > ../output.txt
 #	z80dasm -at image.bin > image.bin.lst
 
-MONITOR_OBJS = monitor.rel crt0.rel
+MONITOR_OBJS = \
+	src/monitor/monitor.rel \
+	src/monitor/crt0.rel
 
 monitor.ihx: $(MONITOR_OBJS)
+
+welcome.ihx: src/welcome.rel
 
 %.bin: %.ihx
 	objcopy --input-target=ihex --output-target=binary $*.ihx $@
@@ -34,10 +38,10 @@ monitor.ihx: $(MONITOR_OBJS)
 	sdcc -mz80 --no-std-crt0 --code-loc 0x0100 --data-loc 0x800 --stack-loc 0xF000 -o $@ $^
 
 %.rel: %.c
-	sdcc -mz80 --no-std-crt0 --code-loc 0x0100 --data-loc 0x800 --stack-loc 0xF000 -c -o $@ $<
+	sdcc -Iinclude -mz80 --no-std-crt0 --code-loc 0x0100 --data-loc 0x800 --stack-loc 0xF000 -c -o $@ $<
 
 %.rel: %.asm
-	sdasz80 -l -p -o -s $<
+	sdasz80 -Iinclude -l -p -o -s $<
 
 clean:
 	find -regex ".*\.\(ihx\|bin\|rel\|sym\|lst\|rst\|lk\|noi\|map\)" -delete -print
