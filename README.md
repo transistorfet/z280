@@ -66,9 +66,26 @@ latching issue, and it seems to execute code now, but I can't get much visibilit
 I looked at the ST0-ST3 signals in particular, which output a number corresponding to the
 transaction type during each bus cycle.  It seems to be running as expected, accessing memory either
 cacheable (0x8) or non-cacheable (0x9), and refreshing memory (0x1).  When the CPU halts, it issues
-a halt bus cycle (0x3) and then only performs refresh cycles after that.  Beyond that though, I
-haven't yet confirmed it's running the program as expected.  Getting the on-chip peripherals
-programmed will take a decent amount of code.
+a halt bus cycle (0x3) and then only performs refresh cycles after that.
+
+I tried adding an EPU instruction, which is a custom Z280 instruction for accessing a coprocessor.
+It uses its own transaction type, 0xD for the first word, and 0xC for all subsequent words.  Writing
+that instruction into the ROM produced those codes, so it's definitely executing code.  It seemed to
+sometimes halt too early though, which turned out to be the attempt at configuring the MMU.  If
+there's a problem with the page table that's loaded once the MMU is enabled, it will cause "the
+fatal condition" to occur, which halts the CPU.  I had a number of mistakes in the code, and the Z80
+assembler I was using was producing some incorrect code.  I switched to SDCC's assembler, which
+produces correct code and correct byte orders, and the MMU can now be initialized without 
+
+With that, I set about configuring the UART according to the [Z280 Technical
+Manual](https://oldcomputers.dyndns.org/public/pub/rechner/zilog/z280/manual/index.html), which also
+requires Timer1 to be configured.  It worked without much trouble, and I was able to print a message
+to a serial terminal.
+
+I will need to make a more capable monitor to write to flash so that I can load and jump to code in
+RAM instead so I don't need to flash the arduino and then flash the onboard chip.  I can instead
+load the data over the serial terminal into ram and run it, the way I can with Computie68k.
+
 
 ![alt text](images/Z280-SBC-rev1/board-bottom.jpg "Z280-SBC Rev. 1 Assembled Board Bottom")
 
