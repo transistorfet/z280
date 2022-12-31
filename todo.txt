@@ -1,4 +1,12 @@
 
+* there is an issue with receiving, where glitches can occur, and it seems more frequent than it should from the measured clock error
+* the CPU reads the first 4 bytes of RAM as FFFF FFFF, which seems to still work because there are no other instructions, no int
+  handlers that could get in the way, so it still executes code as expected
+* boot in the monitor doesn't work
+* load works for a length of 0 but doesn't seem to work with any other length (always hangs)
+
+
+
 * You might not need the RAMSEL and ROMSEL overrides? (well I guess it's insurance more than anything)
 
 * STx signals have the IO space as well as interrupt acknowledges

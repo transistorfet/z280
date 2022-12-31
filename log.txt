@@ -88,3 +88,18 @@
   so when it wrote the end of the user page table, it would be off by one starting the system page table, which messed everything up.
   Adding the missing entry now puts ram exactly where I expect it, and data can be written to it
 
+2022-12-30:
+
+- UART is working for sending, seemingly without glitches, but receiving seems to cause glitches.  With the parity set, it mostly
+  detects the errors as parity errors, but there are still some undetected glitches, which I don't know the cause.  The crystal isn't
+  quite right, but it's within four 9s which seems to be withing the 50ppm for the crystals, and I get glitches fairly often, one in 50
+  characters or so.  I'm not sure what's going on with that.
+
+- I got it compiling C, and copied most of the monitor code and some libc code from Computie to get a basic firmware working.  Loading
+  doesn't work, nor does boot/jump, which are the most critical features.  But I can dump data from the CPU
+- that said, dumping the rom shows FFFF FFFF for the first 4 bytes of ROM pretty reliably, even though the arduino reads it correctly
+  (albeit with 2 NOPs inserted), and it seems to boot fine, although I guess it might still work since the rest of the code until the
+  proper start is just NOPs so it might still work...
+- that is indeed what's happening.  I put a halt instruction at 0x7F, just before the normal start, and it halts without printing
+  anything, so it is likely reading the first 4 bytes as Fs.
+
