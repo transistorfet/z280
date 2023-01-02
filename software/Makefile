@@ -22,6 +22,9 @@ welcome.ihx: src/welcome.rel
 %.txt: %.bin
 	hexdump -v -e '/1 "0x%02x, "' $< > $@
 
+%.load: %.bin
+	tools/make-load-file $^ $@ $(LOAD_ARGS)
+
 %.bin: %.ihx
 	objcopy --input-target=ihex --output-target=binary $*.ihx $@
 	z80dasm -alt --origin=0 -o $*.dis $@

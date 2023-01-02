@@ -128,6 +128,7 @@ void command_poke(int argc, char **args)
 
 }
 
+/*
 #define SECTOR_SIZE	0x020000
 
 void erase_flash(uint32_t sector)
@@ -237,6 +238,7 @@ void command_verifyrom(int argc, char **args)
 
 	fputs("\nVerification complete\n", stdout);
 }
+*/
 
 uint16_t fetch_word(char max)
 {
@@ -261,14 +263,14 @@ void command_load(int argc, char **args)
 	size = fetch_word(4);
 	odd_size = size & 0x01;
 	size >>= 1;
-	//printf("Expecting %x\n", size);
+	printf("Expecting %x\n", size);
 
 	if (argc >= 2)
 		mem = (uint16_t *) strtol(args[1], NULL, 16);
 
 	for (i = 0; i < size; i++) {
 		data = fetch_word(4);
-		//printf("%x ", data);
+		printf("%x ", data);
 		mem[i] = data;
 	}
 
@@ -286,7 +288,7 @@ void command_boot(int argc, char **args)
 
 	if (argc >= 2)
 		entry = (void (*)()) strtol(args[1], NULL, 16);
-	((void (*)()) entry)();
+	//((void (*)()) entry)();
 }
 
 void command_serialtest(int argc, char **args)
@@ -307,7 +309,7 @@ void command_serialtest(int argc, char **args)
  **************************/
 
 struct command {
-	char *name;
+	const char *name;
 	void (*func)(int, char **);
 };
 
@@ -326,9 +328,9 @@ int load_commands(struct command *command_list)
 	add_command("dump", command_dump);
 	add_command("poke", command_poke);
 	//add_command("dumpram", command_dumpram);
-	add_command("eraserom", command_eraserom);
-	add_command("writerom", command_writerom);
-	add_command("verifyrom", command_verifyrom);
+	//add_command("eraserom", command_eraserom);
+	//add_command("writerom", command_writerom);
+	//add_command("verifyrom", command_verifyrom);
 
 	add_command("serialtest", command_serialtest);
 
@@ -383,15 +385,9 @@ void main()
 {
 	init_uart();
 
-	puts("Welcome To C on a Z280!\n\n");
+	puts("Welcome to the Z280!\n\n");
 
 	serial_read_loop();
-
-	while (1) {
-	    int ch = getchar();
-	    putchar(hexchar(ch >> 4));
-	    putchar(hexchar(ch & 0x0F));
-	}
 
 	return;
 }

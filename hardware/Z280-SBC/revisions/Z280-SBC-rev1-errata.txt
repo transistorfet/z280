@@ -13,3 +13,7 @@ Revision 1 Errata and Notes
   line of the will load the data bus into the address bus.  /AS is wired to it because we want it to latch only when /AS
   is low (address an AD bus is valid), which is backwards.  It needs to be inverted before going into LE. 
 
+- the tty connector is rotated 180 degrees, such that the FTDI boards I have must go inward, towards the CPU instead of
+  outward from the board.  It's probably because I copied the k30, and that one was already rotated 90 from the usual
+  position, to come out of the top of the board
+

@@ -103,3 +103,54 @@
 - that is indeed what's happening.  I put a halt instruction at 0x7F, just before the normal start, and it halts without printing
   anything, so it is likely reading the first 4 bytes as Fs.
 
+- from what I can gather with the scope, the scope itself is having trouble interpreting the bits correctly when probing anywhere along
+  the rx line, but works perfectly when disconnected, and just the computer is transmitting.  It also seems to work perfectly when
+  the characters aren't being echoed, but when it's transmitting and receiving at the same time, it gets garbled...
+- is it crosstalk between the tx and rx lines?  an electrical fault?  Or is it something in the uart?
+- there's no electrical continuity, but I suppose there could still be capacitive coupling
+
+2022-12-31:
+
+- testing the Rx line with nothing connected didn't show the interference, but connecting the USB cable, without it connected to USB
+  did show the interference!  Even if only GND, TX, and RX are connected there would be interference, but it didn't seem to do that
+  when only one of TX or RX were connected at the same time.
+- I tried a USB to serial adapter without a cable, and the crosstalk mostly disappeared, but the glitches in the data are still there,
+  so maybe it's not an electrical fault after all...
+- I tried not echoing the data being typed in, but printing the whole line when enter is pressed.  That avoids any interference when
+  sending and receiving at the same time, and still shows what data was actually read in.  Since the data send back is still glitchy,
+  it's not receiving it correctly, and the data that is transmitted doesn't actually get decoded by my scope correctly!  That implies
+  that the transmitter (and thus receiver as well) is not timed correctly or something.  I did have an issue with the stop bit being
+  set to 2, but changing that back doesn't seem to fix the issue
+
+- ok, after a bunch of playing with settings in serial and the scope, and checking the clock pulses, I'm pretty sure the preload
+  value for the timer should be 71, which produces almost the exact frequency, off by 3Hz or something... but I'm still getting errors,
+  despite the electrical looking rock solid...  The data coming out or doing in looks like, especially when they are done one at a time,
+  and even then there are errors.  The data being sent out is exactly the form of a detected error, (0xF5 which is a parity errors, and
+  some 0xF9 and 0xFD which is frame error, and both parity and frame error.  Never overrun error though.  At the moment I'm pretty
+  stumped
+
+2023-01-01:
+
+- so I started to dig into trying to use an external clock source for the serial, and there now seems to be a new problem related to
+  memory access or something...  I spent quite a bit of time trying to debug the serial issue and it was printing garbage instead of
+  the welcome message, but it turns out there's some issue with using the stack.  Everything seems to work fine if the stack isn't
+  using, but using the stack is now causing values to be read that aren't what was written, and I can't yet rule out if it's the
+  compiler or something else
+- In order to isolate the serial issue, so I could put that to rest, I modified the welcome.asm file to loop between reading a
+  character and writing a character using jump instructions to switch between them, so as to avoid using the stack.  I was able to get
+  a simple echoing program working, although I had to fiddle with serial settings a bit.
+- I tried connecting a clock with a 3.6864MHz crystal, which if divided by 32 (UART config = 0xE4) will equal 115200 baud.  I have
+  two clocks, a series and parallel circuit.  The series one was a bit slow at 3.6862MHz and the parallel one was a bit fast at 3.6869MHz
+  The error on both of those clocks is more percentage-wise than the main board clock, which runs at 22.1166MHz when it should be 22.1184
+- surprisingly, the external clock worked perfectly.  I could copy a large chunk of text and have it transfer without a glitch!  So it's
+  something to do with Timer1 I guess.  It's just not reliable.
+- I tried various configurations and verified that at 115200 baud using Timer1 from the CPU clock would still glitch, so an external
+  clock source is seemingly the only way to make this work.  That would be easier to patch into the board if I hadn't already patched in
+  the fix for the latches that uses the inverter gate of the alt clock =/
+
+
+- now to figure out this stack/ram issue... It seems remarkably consistent as if data isn't being written when it should, and the same
+  values are read out of ram... A flakey wire would likely produce a different message every time, but it's identical, just complete
+  nonsense.  It seems to even be consistent across power cycles, so maybe it's even a compiler error
+
+

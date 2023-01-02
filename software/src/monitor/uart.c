@@ -18,16 +18,18 @@ void init_uart()
 	SET_PAGE_REG(0xFE);
 
 	// Set Timer1 Configuration Register
-	OUT_u8(0xE8, 0xC0);	// Continuous, Retrigger, IPA=0
-
-	// Set Timer1 Command/Status Register
-	OUT_u8(0xE9, 0xF8);	// Enable, Software Gate, Software Trigger
+	OUT_u8(0xE8, 0xC8);	// Continuous, Retrigger, IPA=8
 
 	// Set Timer1 Time Constant Register
-	OUT_u16(0xEA, 71);
+	OUT_u16(0xEA, 23);
+
+	// Set Timer1 Command/Status Register
+	OUT_u8(0xE9, 0xF8);	// Enable, Gate=1, Trigger=1
 
 	// Set UART Control Register
-	OUT_u8(0x10, 0xE8);
+	//OUT_u8(0x10, 0xE8);
+	// TODO this is now using the external clock source at f/32
+	OUT_u8(0x10, 0xE4);
 
 	// Set Transmit Control Register
 	OUT_u8(0x12, 0x80);
@@ -44,11 +46,13 @@ int putchar(int ch) __naked
 	ld	iy, #2
 	add	iy, sp
 
+	; Check the transmit buffer empty flag until 0
     0001$:
 	in	a, (0x12)
 	bit	0, a
 	jp	Z, 0001$
 
+	; Write the character to output
 	ld	a, (iy)
 	out	(0x18), a
 

@@ -30,6 +30,16 @@ start:
 	; Initialize the stack pointer to the top of address space, where ram is mapped
 	ld	sp, #0x0000
 
+	; Clear the stack to make debugging easier
+	ld	bc, #0
+	ld	hl, #0xF000
+	ld	a, #0
+clear:
+	ld	(hl), a
+	inc	hl
+	sbc	hl, bc
+	jp	NZ, clear
+
 	call	_main
 	halt
 

@@ -49,7 +49,7 @@ init_uart:
 	LDCTL	#0x08
 
 	; Set Timer1 Configuration Register
-	ld	a, #0xC0	; Continuous, Retrigger, IPA=0
+	ld	a, #0xC8	; Continuous, Retrigger, IPA=8
 	out	(0xE8), a
 
 	; Set Timer1 Command/Status Register
@@ -57,16 +57,20 @@ init_uart:
 	out	(0xE9), a
 
 	; Set Timer1 Time Constant Register
-	ld	hl, #0x27
+	ld	hl, #23
 	OUTW	#0xEA
 
 	; Set UART Control Register
-	ld	a, #0xC8
+	ld	a, #0xE4	; TODO this is now using the external source with f/32 scaling
 	out	(0x10), a
 
 	; Set Transmit Control Register
 	ld	a, #0x80
 	out	(0x12), a
+
+	; Set Receive Control Register
+	ld	a, #0x80
+	out	(0x14), a
 
 	ret
 
@@ -108,9 +112,8 @@ write_ram_inner:
 
 	ret
 
-
 ;;;;;;;;;;;;;;;;;;;
-;;;; Data      ;;;;
+;;;; Constants ;;;;
 ;;;;;;;;;;;;;;;;;;;
 
 msg:	.ascii	"Welcome To Bread80!\n\n\0"
@@ -155,3 +158,10 @@ page_table:
 ; force the size to 512 bytes
 	.org	0x200
 	nop
+
+;;;;;;;;;;;;;;;;;;;
+;;;; Data      ;;;;
+;;;;;;;;;;;;;;;;;;;
+
+	.area	_DATA	(ABS)
+
