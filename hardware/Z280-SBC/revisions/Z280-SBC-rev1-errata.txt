@@ -17,3 +17,8 @@ Revision 1 Errata and Notes
   outward from the board.  It's probably because I copied the k30, and that one was already rotated 90 from the usual
   position, to come out of the top of the board
 
+- there seems to be a problem with Timer1 running off the CPU clock when used as the UART clock.  It seems to glitch no
+  matter what, when receiving data, regardless of the configuration of Timer1 or the UART .  An external clock wired to
+  Timer1 input fixes the issue, but I've repurposed the alternate clock's inverters to fix the latches, so the clock is on
+  an external breadboad.
+

@@ -153,4 +153,16 @@
   values are read out of ram... A flakey wire would likely produce a different message every time, but it's identical, just complete
   nonsense.  It seems to even be consistent across power cycles, so maybe it's even a compiler error
 
+- I was able to compile the welcome.asm file with the current serial settings, and it actually worked fine, the message printed
+  successfully.  It seems to be an issue with the monitor only at this point, although it might also be because the welcome program,
+  while it does require the stack to call functions, it only needs the top of the stack, whereas the monitor program writes a fair
+  amount to the stack.
+- I tried the previous commit's monitor code and it also prints garbage instead of the message, so I feel strongly this is a hardware
+  problem, although that could include a problem with the flash chip not storing its program
+- There is definitely data written to the stack by the monitor, and it seems correctish, but there still could be a stuck address line
+  still, which only affects the program after using more than 32/64 bytes or something (I still suspect A4 a bit)
+- one of the easier things to try would be to resolder the memory chips.  It could be the flux that I didn't clean off which has
+  corroded something, or flexing the board when removing the 40-pin connectors.  I might as well resolder the arduino shield while I'm
+  I've been having a lot of flakyness with power supplied through the arduino
+
 
