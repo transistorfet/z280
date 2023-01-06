@@ -10,7 +10,7 @@
 #define ROM_ADDR	0x000000
 #define ROM_SIZE	0x1800
 
-#define RAM_ADDR	0x100000
+#define RAM_ADDR	0x2000
 #define RAM_SIZE	1024
 
 void delay(int count)
@@ -240,11 +240,24 @@ void command_verifyrom(int argc, char **args)
 }
 */
 
-uint16_t fetch_word(char max)
+
+uint8_t fetch_byte()
+{
+	char buffer[2];
+
+	for (char i = 0; i < 2; i++) {
+		buffer[i] = getchar();
+		buffer[i] = buffer[i] <= '9' ? buffer[i] - 0x30 : buffer[i] - 0x37;
+	}
+
+	return (buffer[0] << 4) | buffer[1];
+}
+
+uint16_t fetch_word()
 {
 	char buffer[4];
 
-	for (char i = 0; i < max; i++) {
+	for (char i = 0; i < 4; i++) {
 		buffer[i] = getchar();
 		buffer[i] = buffer[i] <= '9' ? buffer[i] - 0x30 : buffer[i] - 0x37;
 	}
@@ -255,27 +268,21 @@ uint16_t fetch_word(char max)
 void command_load(int argc, char **args)
 {
 	int i;
-	char odd_size;
 	uint32_t size;
 	uint16_t data;
-	uint16_t *mem = (uint16_t *) RAM_ADDR;
+	uint8_t *mem = (uint8_t *) RAM_ADDR;
 
-	size = fetch_word(4);
-	odd_size = size & 0x01;
-	size >>= 1;
-	printf("Expecting %x\n", size);
+	size = fetch_word();
+	//printf("Expecting %x\n", size);
 
 	if (argc >= 2)
-		mem = (uint16_t *) strtol(args[1], NULL, 16);
+		mem = (uint8_t *) strtol(args[1], NULL, 16);
 
 	for (i = 0; i < size; i++) {
-		data = fetch_word(4);
-		printf("%x ", data);
+		data = fetch_byte();
+		//printf("%x ", data);
 		mem[i] = data;
 	}
-
-	if (odd_size)
-		mem[i] = fetch_word(2);
 
 	fputs("Load complete\n", stdout);
 }
@@ -303,6 +310,25 @@ void command_serialtest(int argc, char **args)
 	putchar('\n');
 }
 
+void command_ramtest(int argc, char **args)
+{
+	uint8_t data;
+	int errors = 0;
+
+	uint8_t *mem = (uint8_t *) RAM_ADDR;
+	for (int i = 0; i < RAM_SIZE; i++) {
+		mem[i] = (uint8_t) i;
+	}
+
+	for (int i = 0; i < RAM_SIZE; i++) {
+		data = (uint8_t) mem[i];
+		printf("%x ", data);
+		if (data != i)
+			errors++;
+	}
+
+	printf("\nErrors: %d", errors);
+}
 
 /**************************
  * Command Line Execution *
@@ -333,6 +359,7 @@ int load_commands(struct command *command_list)
 	//add_command("verifyrom", command_verifyrom);
 
 	add_command("serialtest", command_serialtest);
+	add_command("ramtest", command_ramtest);
 
 	return num_commands;
 }

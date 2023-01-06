@@ -17,14 +17,14 @@ void init_uart()
 {
 	SET_PAGE_REG(0xFE);
 
-	// Set Timer1 Configuration Register
-	OUT_u8(0xE8, 0xC8);	// Continuous, Retrigger, IPA=8
+	//// Set Timer1 Configuration Register
+	//OUT_u8(0xE8, 0xC8);	// Continuous, Retrigger, IPA=8
 
-	// Set Timer1 Time Constant Register
-	OUT_u16(0xEA, 23);
+	//// Set Timer1 Time Constant Register
+	//OUT_u16(0xEA, 23);
 
-	// Set Timer1 Command/Status Register
-	OUT_u8(0xE9, 0xF8);	// Enable, Gate=1, Trigger=1
+	//// Set Timer1 Command/Status Register
+	//OUT_u8(0xE9, 0xF8);	// Enable, Gate=1, Trigger=1
 
 	// Set UART Control Register
 	//OUT_u8(0x10, 0xE8);
@@ -40,11 +40,14 @@ void init_uart()
 
 int putchar(int ch) __naked
 {
+	__asm
+	push	hl
+	__endasm;
+
 	SET_PAGE_REG(0xFE);
 
 	__asm
-	ld	iy, #2
-	add	iy, sp
+	pop	hl
 
 	; Check the transmit buffer empty flag until 0
     0001$:
@@ -53,7 +56,7 @@ int putchar(int ch) __naked
 	jp	Z, 0001$
 
 	; Write the character to output
-	ld	a, (iy)
+	ld	a, l
 	out	(0x18), a
 
 	ld	hl, #0
@@ -78,15 +81,15 @@ int getchar() __naked
 
 	; Read in the next character and return
 	in	a, (0x16)
-	ld	h, #0
-	ld	l, a
+	ld	d, #0
+	ld	e, a
 
 	ret
 
     0002$:
 	or	a, #0xF0
-	ld	h, #0
-	ld	l, a
+	ld	d, #0
+	ld	e, a
 
 	; Discard the error byte
 	in	a, (0x16)
@@ -94,6 +97,8 @@ int getchar() __naked
 	; Reset the error bits
 	ld	a, #0x80
 	out	(0x14), a
+
+	ld	de, #0
 
 	ret
 	__endasm;

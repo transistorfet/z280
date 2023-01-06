@@ -165,4 +165,99 @@
   corroded something, or flexing the board when removing the 40-pin connectors.  I might as well resolder the arduino shield while I'm
   I've been having a lot of flakyness with power supplied through the arduino
 
+2023-01-03:
+
+- Well resoldering the memory chips didn't fix the problem.
+- There were generally some problems with the arduino not reading data correctly from the rom chip, and holding the address/data
+  connector down seemed to help, so I resoldered a lot of the pins on the shield, and that seemed to fix the issue where it wouldn't
+  write because it thought the rom wasn't erased, or the erase command didn't work properly
+- the symptom was a bit odd though in that it showed mostly 0xFFFF but with some values that matched the original rom values in their
+  expected places, as if it didn't erase everything, but it did erase most of the rom.  I'm not sure what would cause that behaviour
+
+- as for the serial printing issue... it seems to print a consistent message instead of random data each time it's reset, or power
+  cycled, so I suppose it's still reading data in ROM, but it has the wrong memory location.  But I can't seem to find the sequence
+  of data in ram.
+- at the moment, the sequence is 0x16, 0x17, 0x18 to 0x2B, then 0x13 followed by a space, and 0xD7, 0xD8.  This is oddly specific
+- the first sequence up to but not including the 0x13 is exactly the same characters as the welcome message, and it's printed using
+  puts, so that last 0x13 is the extra linefeed character (should be 0x0A) that's printed with putchar().  The space and the two 0xD7,
+  0xD8 characters are the "> "prompt, so they should be 0x3E, 0x20.  So it's as if everything is working correctly except for putchar,
+  which is a naked inline function, but the disassembled code all seems correct
+- it's as if either the arguments passed to putchar are not fetched or passed properly (which doesn't seem to be the case from the code),
+  or there's a test mode enabled on the serial where it prints sequential characters, but it seems like only a FF or 00 code can be sent
+  as a test parameter
+
+- It turns out the calling convention is through registers, so the value I was taking off the stack wasn't right.  It could have been
+  related to changing putchar and getchar to use `int` instead of `char` but it was working before then
+- Using the registers for putchar fixes the printing of the welcome message, so it uses the correct characters, but getchar is still not
+  working, and there definitely seems to be another glitch because it will either constantly reboot and print that welcome message, or
+  just start printing garbage... it's very strange and still feels like a hardware issue
+
+- I forgot I had upgraded my computer on the 31st, and that upgraded SDCC from 4.0 to 4.2, which might somehow explain something??
+- I tried downgrading the compiler and that didn't seem to fix the issue.  It was still producing garbage, and now it seems to keep
+  printing junk, as if there's a hardware glitch =/
+
+- ok, so it was totally not working and dumping screenfuls of garbage through serial, but when I disconnected the arduino and powered it
+  through the serial converter, it prints the welcome message correctly and reads in data seemingly correctly, but if I enter a command,
+  it resets back to the welcome prompt... maybe that's another error
+- welp... it seems to work now.  I had forgot it was running because it's powered through serial atm, and noticed it was still sittng where
+  it had been without new data coming in, so pressed enter and said Unknown Command and gave me a prompt!  It seems to be working now,
+  at least `help` and `serialtest` work properly.  No idea why it didn't work when I first tried it, and why it was resetting constantly.
+
+- it's mostly working, as long as it's not through the arduino.  It occasionally glitches when the wire for the clock is bumped, so I
+  should maybe do something about that.  That said... if I had an ATF chip to install, I could derive the serial clock from the cpu clock
+  possibly?  Well the CPU clock changes sometimes which might be what causes the issue.  I'd need to take an output directly from the
+  main clock
+
+- there is now an issue with printing numbers, possibly a C type or optimization issue
+
+- it's back to acting up.  It prints the welcome message but if you press enter, it's as if it resets, and prints the welcome message
+  again.  If you run `help`, it prints a line of garbage and then the command list.  The hardcoded test command works but every other
+  command causes a reset.  Didn't I have this problem earlier?
+- Nope, I just forgot again that I need to disconnect the arduino from the board or else it crashes, maybe undervoltage, because I get
+  low voltage from the arduino unless I press on the board, which works for a bit until it doesn't.  This has been a persistent issue
+  and I'm not yet sure if it's the arduino's pins or the shield's pins, but just using power through serial without the arduino is a
+  workaround for now
+
+
+2023-01-04:
+
+- I managed to get the ATF1504 programmer working, but I just noticed on the schematic that the CTIN1 pin is connected to an input-only
+  pin, when I need it to be an output, in order to feed in the input from ALT_CLK.  That said, I think I could possible leave that pin
+  disconnected, and just patch a wire on the bottom of the PLCC socket from ALT_CLK to CTIN1.  I still have to use an external clock
+  because I'm still reusing the clock's inverter, and I didn't add the latch enable signal to the CPLD because it was just AS.  It's not
+  that easy either to get the LE pin from the top of the board to the PLCC pin on the bottom.  I could maybe install it when I put the
+  socket in, but then I won't be able to fix it if the wire breaks =/
+- oh, as it turns out, I have a header pins connector for CTIN1, so I can at least hook up the serial clock with the CPLD in place, so
+  I don't need to patch the board.  I don't know what I'd use the CPLD for though either...
+
+- if you had an FPGA board that could interface as a device, it could provide the RTS/CTS signals, or even just be a whole serial
+  controller
+
+2023-01-05:
+
+- interesting, when I hooked it up for the first time this morning, directly to serial without the arduino, and without resetting first
+  I pressed enter in the terminal and it printed the welcome screen.  Pressing enter again showed Unknown Command, but a few more presses
+  and it showed the welcome screen again, and a few more times.  After about 10-20 enters it's only showing Unknown Command now.  That's
+  a bit worrying that it can sometimes reset.  It seems to be related to warming up, or something, but either way, there's still a
+  hardware glitch lurking in here somewhere
+
+- I left it on for a while, and it sat there happily not doing anything, until I pressed enter again and it started printing the welcome
+  message and prompt over and over again as if it was immediately resetting after each print.  I couldn't get it to stop at all until
+  I started touching around the latch enable bodge wire and the left side of the left most latch, where the high byte of the data bus
+  is connected.  I could get it to sit at the prompt, but pressing enter would make it loop again, until eventually holding my finger on
+  the data bus side of the latch and pressing reset, and then pressing enter finally got it to stop and actually execute commands (print
+  Unknown Command).  Pressing enter again puts it into a loop, but holding the latch will fix it
+- I resoldered the databus (left) side of the high byte (left latch), and that seems to have fixed the glitches.  It now always prints
+  Unknown Command, but I need to give it some time to see if it starts glitching again.
+- the pins didn't look cracked or disconnected or thin on solder.  They were a bit dull, but otherwise looked pretty good, so I'm not sure
+  why it was a problem.  Again, it's a bit disconcerting that things can look fine, but still be glitchy =/
+- after a few hours, it's still stable and working properly
+
+- It should be possible to write some code to erase the flash and rewrite the monitor to flash, but the CPU can only access 64K at once,
+  so it's cumbersome to write the whole chip, and besides, the serial doesn't seem to like it going too fast, so it's slow to copy data
+  over.
+- that said... if I used the interrupts, that might speed up serial enough to be somewhat useable
+- but really, I separate serial controller would be best, one with RTS/CTS and a FIFO
+- the CPLD is kind of pointless with the I/O assignments its has, other than to just test ISP of an ATF chip
+
 

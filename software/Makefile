@@ -1,6 +1,8 @@
 
 all: monitor.txt
 
+LOAD_ARGS = 2000
+
 MONITOR_OBJS = \
 	src/libc/strlen.rel \
 	src/libc/strcmp.rel \

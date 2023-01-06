@@ -1,14 +1,8 @@
 
-* for serial, can you try using an external clock to power the uart?  If you can make an oscillator that works at the right frequency, you can at
-  least eliminate the clock as a source of the glitching
-* also try using a different CPU
-
-
-* there is an issue with receiving, where glitches can occur, and it seems more frequent than it should from the measured clock error
 * the CPU reads the first 4 bytes of RAM as FFFF FFFF, which seems to still work because there are no other instructions, no int
   handlers that could get in the way, so it still executes code as expected
 * boot in the monitor doesn't work, compiler error
-* load works for a length of 0 but doesn't seem to work with any other length (always hangs)
+* printf is sometimes glitchy
 
 
 

@@ -22,3 +22,11 @@ Revision 1 Errata and Notes
   Timer1 input fixes the issue, but I've repurposed the alternate clock's inverters to fix the latches, so the clock is on
   an external breadboad.
 
+- I put CTIN1 and CTIN2 onto input-only pins of the CPLD, when they should be output pins (input to the CPU, output from
+  the CPLD).  I need to use CTIN1 as the alternate clock input
+
+- the CPLD is kind of useless because it doesn't have any extra I/O pins that could be hooked up to other devices, such
+  as an I2C connection to other devices, or chip select lines to index devices based on the address lines.  I probably
+  should have put the bigger PLCC84 chip on and wired the extra I/O to generic header pins.  Maybe included the data bus
+  so that simple I/O devices could be emulated, but that might require too many macrocells and would be better for an FPGA
+
