@@ -1,4 +1,7 @@
 
+* try using interrupts for serial to hopefully transfer data faster than otherwise
+
+
 * the CPU reads the first 4 bytes of RAM as FFFF FFFF, which seems to still work because there are no other instructions, no int
   handlers that could get in the way, so it still executes code as expected
 * boot in the monitor doesn't work, compiler error
