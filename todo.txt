@@ -1,26 +1,19 @@
 
-* try using interrupts for serial to hopefully transfer data faster than otherwise
+* should you use an MC68692 Serial Controller or something instead of the CPLD, or replace it with the 84 pin PLCC and hook up
+  address and data pins (at least 8 data bits) to the I/O, so that you can emulate simple I/O
+* CPLD could act as both an interrupt controller and bus coordinator (or rather, the local bus coordinator, where the global
+  coordinator would be on the backplane).  This would be if you were trying the multiprocessor feature
 
+
+* try using interrupts for serial to hopefully transfer data faster than otherwise
 
 * the CPU reads the first 4 bytes of RAM as FFFF FFFF, which seems to still work because there are no other instructions, no int
   handlers that could get in the way, so it still executes code as expected
-* boot in the monitor doesn't work, compiler error
+  Not sure if this is solved now? ^^
+* boot in the monitor doesn't work, compiler error so it's commented out
 * printf is sometimes glitchy
 
 
-
-* You might not need the RAMSEL and ROMSEL overrides? (well I guess it's insurance more than anything)
-
-* STx signals have the IO space as well as interrupt acknowledges
-* WAIT is synchronous!  It must be asserted in coordination with the clock
-* CPLD could act as both an interrupt controller and bus coordinator (or rather, the local bus coordinator, where the global coordinator would be on the backplane)
-
-* perhaps I can use a smaller ATF chip after all, since the 84 pin one is facking huge =/  But there aren't any 44 pin ones easily available right now (also concerning)
-
-
-* actually, you can use the single 16-bit flash chip, the 29F800, because you can't write data to it without the special programming sequence,
-  so using all 16-bits all the time is fine because it'll only be for reading...
-
-* should you put jumpers in the ROMSEL/RAMSEL signals, such that an I/O pin on the CPLD can be programmed as an input or an output,
-  and the jumper bridged or not to allow either the logic or the CPLD to control access
+* to use the arduino, you'd really need to add a flip-flop for the wait state, which the arduino could manually activate via a pin
+  on the control signals 40-pin connector to enable latching, but I'm mostly past the need for the arduino besides programming
 

@@ -1,4 +1,11 @@
 
+2022-11-??:
+- during PCB design
+- actually, you can use the single 16-bit flash chip, the 29F800, because you can't write data to it without the special
+  programming sequence, so using all 16-bits all the time is fine because it'll only be for reading...  [so long as you can write
+  16-bits at once, which is possible here]
+
+
 2022-12-23:
 
 - The CPU sort of seems to be working, and fetching what it should sorta, but the arduino is a bit too slow I think to respond in
