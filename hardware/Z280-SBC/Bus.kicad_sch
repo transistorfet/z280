@@ -6,7 +6,7 @@
 
   (title_block
     (title "Z280-SBC")
-    (rev "1")
+    (rev "2")
   )
 
   (lib_symbols
@@ -1973,10 +1973,10 @@
       (effects (font (size 1.27 1.27)) (justify left) hide)
     )
   )
-  (global_label "ALT_CLK" (shape input) (at 90.17 53.34 180) (fields_autoplaced)
+  (global_label "SERCLK" (shape input) (at 90.17 53.34 180) (fields_autoplaced)
     (effects (font (size 1.27 1.27)) (justify right))
     (uuid 29042cd4-c73e-4ac4-b906-0c4a7f9d87b6)
-    (property "Intersheet References" "${INTERSHEET_REFS}" (id 0) (at 80.1369 53.2606 0)
+    (property "Intersheet References" "${INTERSHEET_REFS}" (id 0) (at 80.5602 53.2606 0)
       (effects (font (size 1.27 1.27)) (justify right) hide)
     )
   )

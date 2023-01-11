@@ -6,7 +6,7 @@
 
   (title_block
     (title "Z280-SBC")
-    (rev "1")
+    (rev "2")
   )
 
   (lib_symbols
@@ -2641,6 +2641,15 @@
   (wire (pts (xy 116.84 107.95) (xy 102.87 107.95))
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid facf06a3-e8ae-47db-aec5-8b400683fb8c)
+  )
+
+  (text "SERIAL PORT CONNECTION" (at 101.6 25.4 0)
+    (effects (font (size 1.27 1.27) bold italic) (justify left bottom))
+    (uuid 97a36d35-19ad-485a-bd0d-cfdfae23a0b2)
+  )
+  (text "COMPACTFLASH CARD SLOT & CONTROL\n" (at 96.52 82.55 0)
+    (effects (font (size 1.27 1.27) bold italic) (justify left bottom))
+    (uuid a5055390-2e28-4469-9454-68f72a5c1637)
   )
 
   (label "A2" (at 93.98 146.05 0)
