@@ -1,3 +1,6 @@
 (sym_lib_table
-  (lib (name "Z280")(type "KiCad")(uri "/media/work/z280/hardware/kicad-libraries/symbols/Z280.kicad_sym")(options "")(descr ""))
+  (version 7)
+  (lib (name "Computie_CPLDs")(type "KiCad")(uri "/media/work/z280/hardware/kicad-libraries/computie-kicad-library/symbols/Computie_CPLDs.kicad_sym")(options "")(descr ""))
+  (lib (name "Computie_Memory")(type "KiCad")(uri "/media/work/z280/hardware/kicad-libraries/computie-kicad-library/symbols/Computie_Memory.kicad_sym")(options "")(descr ""))
+  (lib (name "Computie_Z280")(type "KiCad")(uri "/media/work/z280/hardware/kicad-libraries/computie-kicad-library/symbols/Computie_Z280.kicad_sym")(options "")(descr ""))
 )

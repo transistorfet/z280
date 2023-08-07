@@ -11,6 +11,11 @@ expansion bus that an Arduino can be connected to.  The bus pin assignments matc
 Supervisor shield, so the onboard flash chip can be programmed using the same harness as
 [Computie](https://github.com/transistorfet/computie/raw/main/hardware/68k-Supervisor).
 
+This repository uses git submodules, and can be cloned using:
+```
+git clone --recurse-submodules git@github.com:transistorfet/z280.git
+```
+
 Z280-SBC Revision 1
 -------------------
 

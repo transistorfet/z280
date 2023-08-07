@@ -1,3 +1,4 @@
 (fp_lib_table
-  (lib (name "Computie_Connectors")(type "KiCad")(uri "/media/work/z280/hardware/kicad-libraries/footprints/Computie_Connectors.pretty")(options "")(descr ""))
+  (version 7)
+  (lib (name "Computie_Connectors")(type "KiCad")(uri "/media/work/z280/hardware/kicad-libraries/computie-kicad-library/footprints/Computie_Connectors.pretty")(options "")(descr ""))
 )
